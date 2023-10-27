@@ -1,21 +1,24 @@
 const express = require('express');
-const dotenv = require('dotenv');
-const app = express();
-const {mongoose} = require('mongoose')
-const cors = require('cors');
-const bodyParser = require("body-parser");
+const dotenv = require('dotenv')
+const authRoutes = require('./routes/noteRoute.js');
+const {mongoose} = require('mongoose');
 
 dotenv.config();
 
-app.use(express.json());
+
+const app = express();
 
 mongoose.connect(process.env.MONGO_URL)
     .then(() => console.log('Database connected successfully'))
     .catch((err) => console.log('Database not connected', err))
 
-app.use(bodyParser.urlencoded({extended: false}));
-app.use(bodyParser.json());
 
-const port = process.env.PORT;
+app.use(express.json())
 
-app.listen(port, () => console.log(`Server running at port: ${port}`))
+app.use(express.urlencoded({ extended: false}));
+
+app.use('/', authRoutes)
+
+const port = process.env.PORT || 8000;
+
+app.listen(port, () => console.log(`Server running at port ${port}`))
